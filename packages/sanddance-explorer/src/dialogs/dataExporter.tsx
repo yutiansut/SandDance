@@ -5,6 +5,7 @@ import { DataFileType } from '../interfaces';
 import { strings } from '../language';
 import { FabricTypes } from '@msrvida/office-ui-fabric-react-cdn-typings';
 import { base } from '../base';
+import { SandDance } from '@msrvida/sanddance-react';
 
 export interface Props {
   //dataSource: DataSource;
@@ -68,21 +69,35 @@ export class DataExportPicker extends React.Component<Props, State> {
     });
   }
 
+  columnReplacer(name, value) {
+    switch (name) {
+      case SandDance.VegaDeckGl.constants.GL_ORDINAL:
+      case SandDance.constants.FieldNames.Active:
+      case SandDance.constants.FieldNames.Collapsed:
+      case SandDance.constants.FieldNames.Index:
+      case SandDance.constants.FieldNames.Selected:
+      case SandDance.constants.FieldNames.Top:
+      return undefined;
+    }
+    return value === null ? '' : value;
+  }
+
   // Convert to json and store in dataExport state
   convertToJson(data: object[]) {
-    console.log(JSON.stringify(data));
-    return JSON.stringify(data);
-
+    
+    //console.log(JSON.stringify(data));
+    return JSON.stringify(data, this.columnReplacer);
+  
   }
   // Convert to csv
   convertToCsv(data: object[]) {
-    // From: https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
+    // Adapted from: https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
     var json = data;
     var fields = Object.keys(json[0]);
-    var replacer = function(key, value) { return value === null ? '' : value };
+    //var replacer = function(key, value) { return value === null ? '' : value };
     var csv = json.map(function(row){
     return fields.map(function(fieldName){
-    return JSON.stringify(row[fieldName], replacer)
+    return JSON.stringify(row[fieldName], this.columnReplacer)
       }).join(',')
     })
     csv.unshift(fields.join(','));
@@ -94,10 +109,10 @@ export class DataExportPicker extends React.Component<Props, State> {
     // Adapted from: https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
     var json = data;
     var fields = Object.keys(json[0]);
-    var replacer = function(key, value) { return value === null ? '' : value };
+    //var replacer = function(key, value) { return value === null ? '' : value };
     var tsv = json.map(function(row){
     return fields.map(function(fieldName){
-    return JSON.stringify(row[fieldName], replacer)
+    return JSON.stringify(row[fieldName], this.columnReplacer)
       }).join('\t')
     })
     tsv.unshift(fields.join('\t'));
