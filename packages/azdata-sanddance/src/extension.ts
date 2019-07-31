@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Issue #6374 created in ADS repository to track this ask
     azdata.queryeditor.registerQueryEventListener({
         async onQueryEvent(type: azdata.queryeditor.QueryEvent, document: azdata.queryeditor.QueryDocument, args: any) {
-            if (type === 'visualize') {
+            if (type === 'visualize' && args.extensionId === 'msrvida.azdata-sanddance') {
                 const providerid = document.providerId;
                 let provider: azdata.QueryProvider;
                 provider = azdata.dataprotocol.getProvider(providerid, azdata.DataProviderType.QueryProvider);
