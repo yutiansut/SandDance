@@ -33,7 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-<<<<<<< HEAD
     //To do: replace regiserCommand with suubscription.push
     vscode.commands.registerCommand('query.sanddance', () => {
         azdata.queryeditor.registerQueryEventListener({
@@ -85,7 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             }
         });
-=======
+
     //make the visualizer icon visible
     vscode.commands.executeCommand('setContext', 'showVisualizer', true);
 
@@ -132,7 +131,6 @@ export function activate(context: vscode.ExtensionContext) {
                 queryViewInSandance(fileuri, context, document);
             }
         }
->>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     });
 }
 
@@ -246,11 +244,8 @@ export async function saveHdfsFileToTempLocation(commandContext: azdata.ObjectEx
 
 
 function saveTemp(data: string): vscode.Uri {
-<<<<<<< HEAD
-    let localFile = tempWrite.sync(data, "file.csv");
-=======
+
     let localFile = tempWrite.sync(data, "file.json");
->>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     return vscode.Uri.file(localFile);
 }
 

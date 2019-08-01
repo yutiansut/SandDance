@@ -18,12 +18,7 @@
         "Other"
     ],
     "activationEvents": [
-<<<<<<< HEAD
-        "onCommand:sandance.view",
-        "onCommand:query.sanddance"
-=======
         "*"
->>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     ],
     "main": "./out/extension",
     "contributes": {
