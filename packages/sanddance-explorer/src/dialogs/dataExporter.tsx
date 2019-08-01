@@ -41,20 +41,20 @@ export class DataExportPicker extends React.Component<Props, State> {
     return new Promise<void>((resolve, reject) => {
       const uploadFormatError = "";
       const urlError = "";
-      var convertedData : any;
+      var convertedData: any;
       this.setState({ exportType: dataExport });
       if (dataExport == "json") {
         convertedData = this.convertToJson(this.props.data);
         this.props
-        .datasetExportHandler(convertedData, "json")
+          .datasetExportHandler(convertedData, "json")
       } else if (dataExport == "csv") {
         convertedData = this.convertToCsv(this.props.data);
         this.props
-        .datasetExportHandler(convertedData, "csv")
+          .datasetExportHandler(convertedData, "csv")
       } else if (dataExport == "tsv") {
         convertedData = this.convertToTsv(this.props.data);
         this.props
-        .datasetExportHandler(convertedData, "tsv")
+          .datasetExportHandler(convertedData, "tsv")
       };
     });
   }
@@ -77,27 +77,25 @@ export class DataExportPicker extends React.Component<Props, State> {
       case SandDance.constants.FieldNames.Index:
       case SandDance.constants.FieldNames.Selected:
       case SandDance.constants.FieldNames.Top:
-      return undefined;
+        return undefined;
     }
     return value === null ? '' : value;
   }
 
   // Convert to json and store in dataExport state
   convertToJson(data: object[]) {
-    
-    //console.log(JSON.stringify(data));
     return JSON.stringify(data, this.columnReplacer);
-  
+
   }
   // Convert to csv
   convertToCsv(data: object[]) {
     // Adapted from: https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
-    var json = data;
+    var json = JSON.parse(this.convertToJson(data));
     var fields = Object.keys(json[0]);
-    //var replacer = function(key, value) { return value === null ? '' : value };
-    var csv = json.map(function(row){
-    return fields.map(function(fieldName){
-    return JSON.stringify(row[fieldName], this.columnReplacer)
+    var replacer = function(key, value) { return value === null ? '' : value };
+    var csv = json.map(function (row) {
+      return fields.map(function (fieldName) {
+        return JSON.stringify(row[fieldName], replacer)
       }).join(',')
     })
     csv.unshift(fields.join(','));
@@ -107,23 +105,22 @@ export class DataExportPicker extends React.Component<Props, State> {
 
   convertToTsv(data: object[]) {
     // Adapted from: https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable
-    var json = data;
+    var json = JSON.parse(this.convertToJson(data));
     var fields = Object.keys(json[0]);
-    //var replacer = function(key, value) { return value === null ? '' : value };
-    var tsv = json.map(function(row){
-    return fields.map(function(fieldName){
-    return JSON.stringify(row[fieldName], this.columnReplacer)
+    var replacer = function(key, value) { return value === null ? '' : value };
+    var tsv = json.map(function (row) {
+      return fields.map(function (fieldName) {
+        return JSON.stringify(row[fieldName], replacer)
       }).join('\t')
     })
     tsv.unshift(fields.join('\t'));
-    console.log(tsv.join('\r\n'));
     return (tsv.join('\r\n'));
   }
 
 
   render() {
     const closeDialog = () => {
-      this.setState({ dialogHidden: true, working: true});
+      this.setState({ dialogHidden: true, working: true, exportType: DataExportPicker.urlTypes[0] });
     };
 
     return (
@@ -131,10 +128,10 @@ export class DataExportPicker extends React.Component<Props, State> {
         <base.fabric.PrimaryButton
           className="search-action search-bottom-action"
           text={strings.buttonExport}
-          onClick={() => this.setState({ dialogHidden: false, exportType: "json"})}
+          onClick={() => this.setState({ dialogHidden: false })}
           disabled={this.props.disabled}
         />
-       
+
         <base.fabric.Dialog
           hidden={this.state.dialogHidden}
           onDismiss={closeDialog}
