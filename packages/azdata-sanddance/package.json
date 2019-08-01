@@ -2,7 +2,7 @@
     "name": "azdata-sanddance",
     "displayName": "SandDance for Azure Data Studio (Preview)",
     "description": "Visually explore, understand, and present your data.",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "icon": "sanddance-logo.png",
     "preview": true,
     "publisher": "msrvida",
@@ -18,8 +18,12 @@
         "Other"
     ],
     "activationEvents": [
+<<<<<<< HEAD
         "onCommand:sandance.view",
         "onCommand:query.sanddance"
+=======
+        "*"
+>>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     ],
     "main": "./out/extension",
     "contributes": {

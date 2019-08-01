@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
+<<<<<<< HEAD
     //To do: replace regiserCommand with suubscription.push
     vscode.commands.registerCommand('query.sanddance', () => {
         azdata.queryeditor.registerQueryEventListener({
@@ -84,6 +85,54 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             }
         });
+=======
+    //make the visualizer icon visible
+    vscode.commands.executeCommand('setContext', 'showVisualizer', true);
+
+    // Ideally would unregister listener on deactivate, but this is currently a void function.
+    // Issue #6374 created in ADS repository to track this ask
+    azdata.queryeditor.registerQueryEventListener({
+        async onQueryEvent(type: azdata.queryeditor.QueryEvent, document: azdata.queryeditor.QueryDocument, args: any) {
+            if (type === 'visualize') {
+                const providerid = document.providerId;
+                let provider: azdata.QueryProvider;
+                provider = azdata.dataprotocol.getProvider(providerid, azdata.DataProviderType.QueryProvider);
+                let data = await provider.getQueryRows({
+                    ownerUri: document.uri,
+                    batchIndex: args.batchId,
+                    resultSetIndex: args.id,
+                    rowsStartIndex: 0,
+                    rowsCount: args.rowCount
+                });
+
+                let rows = data.resultSubset.rows;
+                let columns = args.columnInfo;
+                let rowsCount = args.rowCount;
+
+                // Create Json
+                let jsonArray = [];
+
+                interface jsonType {
+                    [key: string]: any
+                }
+
+                for (let row = 0; row < rowsCount; row++) {
+                    let jsonObject: jsonType = {};
+                    for (let col = 0; col < columns.length; col++) {
+                        if (!rows[row][col].isNull) {
+                            jsonObject[columns[col].columnName] = rows[row][col].displayValue;
+                        }
+                        // If display value is null, don't do anything for now
+                    }
+                    jsonArray.push(jsonObject);
+                }
+
+                let json = JSON.stringify(jsonArray);
+                let fileuri = saveTemp(json);
+                queryViewInSandance(fileuri, context, document);
+            }
+        }
+>>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     });
 }
 
@@ -197,12 +246,17 @@ export async function saveHdfsFileToTempLocation(commandContext: azdata.ObjectEx
 
 
 function saveTemp(data: string): vscode.Uri {
+<<<<<<< HEAD
     let localFile = tempWrite.sync(data, "file.csv");
+=======
+    let localFile = tempWrite.sync(data, "file.json");
+>>>>>>> acdec131e45bcdd9427405ec02d9e42345f98a3a
     return vscode.Uri.file(localFile);
 }
 
 
 export function deactivate() {
+    vscode.commands.executeCommand('setContext', 'showVisualizer', false);
 }
 
 function newPanel(context: vscode.ExtensionContext, uriFsPath: string) {
