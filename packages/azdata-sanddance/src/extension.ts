@@ -33,58 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    //To do: replace regiserCommand with suubscription.push
-    vscode.commands.registerCommand('query.sanddance', () => {
-        azdata.queryeditor.registerQueryEventListener({
-            async onQueryEvent(type: azdata.queryeditor.QueryEvent, document: azdata.queryeditor.QueryDocument, args: any) {
-                if (type === 'visualize') {
-                    const providerid = document.providerId;
-                    let provider: azdata.QueryProvider;
-                    provider = azdata.dataprotocol.getProvider(providerid, azdata.DataProviderType.QueryProvider);
-                    let data = await provider.getQueryRows({
-                        ownerUri: document.uri,
-                        batchIndex: args.batchId,
-                        resultSetIndex: args.id,
-                        rowsStartIndex: 0,
-                        rowsCount: args.rowCount
-                    });
-
-                    let rows = data.resultSubset.rows;
-                    let columns = args.columnInfo;
-
-                    // Create csv 
-                    let csv = "";
-
-                    // Add column names to csv
-                    for (let i = 0; i < columns.length - 1; i++) {
-                        csv = csv + columns[i].columnName + ",";
-                    }
-                    csv = csv + columns[columns.length - 1].columnName + "\n";
-
-                    // Add row information, adding if displayValue is not null
-                    for (let i = 0; i < rows.length; i++) {
-                        let row = rows[i];
-
-                        for (let j = 0; j < row.length - 1; j++) {
-                            if (!row[j].isNull) {
-                                csv = csv + row[j].displayValue + ",";
-                            } else {
-                                csv = csv + " ,";
-                            }
-                        }
-
-                        if (!row[row.length - 1].isNull) {
-                            csv = csv + row[row.length - 1].displayValue + "\n";
-                        } else {
-                            csv = csv + " \n";
-                        }
-                    }
-                    let fileuri = saveTemp(csv);
-                    queryViewInSandance(fileuri, context, document);
-                }
-            }
-        });
-
     //make the visualizer icon visible
     vscode.commands.executeCommand('setContext', 'showVisualizer', true);
 
@@ -244,7 +192,6 @@ export async function saveHdfsFileToTempLocation(commandContext: azdata.ObjectEx
 
 
 function saveTemp(data: string): vscode.Uri {
-
     let localFile = tempWrite.sync(data, "file.json");
     return vscode.Uri.file(localFile);
 }
